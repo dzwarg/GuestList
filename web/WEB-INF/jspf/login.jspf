@@ -1,0 +1,6 @@
+<%
+ com.zwarg.guestlist.data.Database conn = com.zwarg.guestlist.data.Database.newConnection();
+ 
+ session.setAttribute( "connection", conn );
+ session.setAttribute( "host", conn.login(request) );
+%>

@@ -1,0 +1,7 @@
+<%@page import="com.zwarg.guestlist.data.Host"%>
+
+<% 
+  Host authHost = (Host)session.getAttribute("host");
+  if ( authHost == null || !authHost.getAuthenticated().booleanValue() ) 
+    response.sendRedirect( request.getContextPath() + "/index.jsp" );
+%>
