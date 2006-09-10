@@ -131,6 +131,7 @@
        for ( int gv = 0; gv < guestVec.size(); gv++ )
        {
          java.util.Vector guests = (java.util.Vector)guestVec.get( gv );
+         java.util.Collections.sort( guests );
          int count = Guest.summarizeGuests( guests );
       %>
       
@@ -160,12 +161,12 @@
             <%= (gindex + 1) %>.&nbsp;
           </div>
         
-          <div class="floatleft nooverflow" style="width: 15%;">
+          <div class="floatleft" style="width: 15%;">
           <% if ( !guestLock ) { %>
             <a href="edit.jsp?id=<%= g.getId() %>">
           <% } %>
 
-            <%= g.getProperName() %>
+            <%= g.getFormattedName() %>
             <% if ( !guestLock ) { %></a>
           </div>
           
@@ -275,6 +276,7 @@
 
         <%
           java.util.Vector guests = conn.getGuestsByHost( h.getId() );
+          java.util.Collections.sort( guests );
           int count = Guest.summarizeGuests( guests );
           
           out.write( "( " + count + " ) ");
@@ -288,11 +290,11 @@
           <div class="floatleft" style="width: 25px; text-align: right;">
             <%= (gindex + 1) %>.&nbsp;
           </div>
-          <div class="floatleft nooverflow" style="width: 15%">
+          <div class="floatleft" style="width: 15%">
           <% if ( !guestLock ) { %>
             <a href="edit.jsp?id=<%= g.getId() %>">
           <% } %>
-            <%= g.getProperName() %>
+            <%= g.getFormattedName() %>
             <% if ( !guestLock ) { %></a>
           </div>
 

@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author davidz
  */
-public class Host extends Object implements Serializable {
+public class Host extends Object implements Serializable, Comparable {
   
   public static final String PROP_FULL_NAME = "fullName";
   public static final String PROP_USER_NAME = "userName";
@@ -141,5 +141,17 @@ public class Host extends Object implements Serializable {
     myHost.setPassword( strParam );
     
     return myHost;
+  }
+
+  public int compareTo(Object o) 
+  {
+    if ( o instanceof Host )
+    {
+      Host h = (Host)o;
+      
+      return getFullName().compareTo( h.getFullName() );
+    }
+    
+    throw new ClassCastException( "The object to compare is not a Host object." );
   }
 }

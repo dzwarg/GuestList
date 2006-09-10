@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * @author davidz
  */
-public class Guest extends Object implements Serializable {
+public class Guest extends Object implements Serializable, Comparable {
   /*
          Column         |          Type          |       Modifiers
 ------------------------+------------------------+------------------------
@@ -877,6 +877,47 @@ public class Guest extends Object implements Serializable {
     return theGuest;
   }
   
+  /**
+   * Get the name of a guest in an easy to read format.
+   *
+   * If a guest is a married couple:
+   * Zwarg, Peter and Mary Anne
+   *
+   * If a guest has different names:
+   * Galprin, William and Christina Zwarg
+   *
+   * If a guest is NOT married:
+   * Ficker, Jamie and Joseph Zwick
+   */
+  public String getFormattedName()
+  {
+    String formatted = "";
+    
+    int lastNameStart = strProperName.lastIndexOf( " " );
+    
+    String lastName = strProperName.substring( lastNameStart + 1 );
+    String firstNames = strProperName.substring( 0, lastNameStart );
+    
+    formatted = lastName + ", " + firstNames;
+    
+    if ( countIndividuals() > 1 && strSigOtherProperName.length() > 0 )
+    {
+      int soLastNameStart = strSigOtherProperName.lastIndexOf( " " );
+      
+      String soLastName = strSigOtherProperName.substring( soLastNameStart + 1 );
+      String soFirstNames = strSigOtherProperName.substring( 0, soLastNameStart );
+      
+      formatted += " & " + soFirstNames;
+      
+      if ( !lastName.equals( soLastName ) )
+      {
+        formatted += " " + soLastName;
+      }
+    }
+    
+    return formatted;
+  }
+  
   public int countIndividuals()
   {
     int folks = 1;
@@ -909,5 +950,22 @@ public class Guest extends Object implements Serializable {
     }
     
     return total;
+  }
+
+  /**
+   * Compare this guest to another guest.
+   */
+  public int compareTo(Object o) 
+  {
+    if ( o instanceof Guest )
+    {
+      Guest g = (Guest)o;
+      
+      String yourFormatted = g.getFormattedName();
+      
+      return getFormattedName().compareTo( yourFormatted );
+    }
+    
+    throw new ClassCastException( "The object to compare is not a guest!" );
   }
 }

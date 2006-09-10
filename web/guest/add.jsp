@@ -226,7 +226,7 @@
             <a name="minorattend">Number of Under 18 Attending:</a>&nbsp;
           </div>
           <div class="floatleft halfwidth">
-            &nbsp;<input type="text" name="minorAttend" class="required"/>
+            &nbsp;<input type="text" name="minorAttend" class="required" value="0"/>
           </div>
           <div class="clear">&nbsp;</div>
         </div>

@@ -66,6 +66,7 @@
     <div class="MainSectionBorder">
       <%
         java.util.Vector hosts = conn.getAllHosts();
+        hosts = Collections.sort( hosts );
         for ( int index = 0; index < hosts.size(); index++ ) {
           Host h = (Host)hosts.get( index );
       %>
