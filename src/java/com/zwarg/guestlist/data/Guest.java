@@ -607,11 +607,13 @@ public class Guest extends Object implements Serializable, Comparable {
     
     theGuest.setProperName( strParam );
     
+    /*
     strParam = request.getParameter( "innername" );
     if ( strParam == null || strParam.length() == 0 )
       return null;
     
     theGuest.setInnerEnvelopeName( strParam );
+    */
     
     strParam = request.getParameter("sigothertitle");
     if ( strParam != null )
@@ -621,11 +623,11 @@ public class Guest extends Object implements Serializable, Comparable {
     if ( strParam != null )
       theGuest.setSigOtherProperName( strParam );
     
+    /*
     strParam = request.getParameter( "sigotherinnername" );
     if ( strParam != null )
       theGuest.setSigOtherInnerEnvelopeName( strParam);
-    
-    theGuest.setSigOtherInnerEnvelopeName( strParam );
+    */
     
     strParam = request.getParameter("address1");
     if ( strParam == null || strParam.length() == 0 )
@@ -903,6 +905,9 @@ public class Guest extends Object implements Serializable, Comparable {
     if ( countIndividuals() > 1 && strSigOtherProperName.length() > 0 )
     {
       int soLastNameStart = strSigOtherProperName.lastIndexOf( " " );
+      
+      if ( soLastNameStart == -1 )
+        return formatted;
       
       String soLastName = strSigOtherProperName.substring( soLastNameStart + 1 );
       String soFirstNames = strSigOtherProperName.substring( 0, soLastNameStart );

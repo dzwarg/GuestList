@@ -86,11 +86,11 @@
         Please make sure the following fields are filled before adding:
         <ul>
           <li><a href="#proper">Proper Name</a> - the full,formal name of the guest.</li>
-          <li><a href="#innername">Inner Envelope Name</a> - the guest's name, as it appears on an inside envelope.
-          <li><a href="#address1">Address/Full Address (Line 1)</a> - the first line of the guest's address.
-          <li><a href="#city">Address/City</a> - the guest's resident city.
-          <li><a href="#state">Address/State</a> - the guest's resident state.
-          <li><a href="#zip">Address/Zip Code</a> - the guest's resident zip code.
+          <!--<li><a href="#innername">Inner Envelope Name</a> - the guest's name, as it appears on an inside envelope.</li>-->
+          <li><a href="#address1">Address/Full Address (Line 1)</a> - the first line of the guest's address.</li>
+          <li><a href="#city">Address/City</a> - the guest's resident city.</li>
+          <li><a href="#state">Address/State</a> - the guest's resident state.</li>
+          <li><a href="#zip">Address/Zip Code</a> - the guest's resident zip code.</li>
           <li><a href="#minorattend">Under 18 Attending</a> - the number of minors that will attend with the invitee.</li>
         </ul>
       </div>
@@ -169,6 +169,7 @@
             <% strTmp = theGuest.getProperName(); %>
             <input type="text" name="propername" value="<%= strTmp %>" class="required"/>
           </div>
+          <!--
           <div class="floatleft halfwidth" style="text-align:right;">
             Inner Name:&nbsp;
           </div>
@@ -176,6 +177,7 @@
             <% strTmp = theGuest.getInnerEnvelopeName(); %>
             &nbsp;<input type="text" name="innername" value="<%= strTmp %>"/>
           </div>
+          -->
           <div class="clear"></div>
           <div class="floatleft halfwidth" style="text-align:right;">
             Significant Other:&nbsp;
@@ -191,6 +193,7 @@
             <% strTmp = theGuest.getSigOtherProperName(); %>
             <input type="text" name="sigotherpropername" value="<%= ( (strTmp == null) ? "" : strTmp ) %>"/>
           </div>
+          <!--
           <div class="floatleft halfwidth" style="text-align:right;">
             Inner Name:&nbsp;
           </div>
@@ -198,6 +201,7 @@
             <% strTmp = theGuest.getSigOtherInnerEnvelopeName(); %>
             &nbsp;<input type="text" name="sigotherinnername" value="<%= strTmp %>"/>
           </div>
+          -->
           <div class="clear">&nbsp;</div>
         </div>
         <div class="TeenyBorder">
