@@ -65,6 +65,7 @@
     
     <%
       boolean bolStatus = false;
+
       if ( request.getParameter("grouping") == null ||
       !request.getParameter("grouping").equalsIgnoreCase("host") ) {
         
@@ -119,6 +120,67 @@
       <div class="clear"></div>    
     <% } %>
     
+    <%
+    // Before processing, modify any guests that have been modified on this page.
+    int guestChanged = 0;
+    if ( bolVerbose ) {
+      if ( request.getParameter("guestId") != null )
+      {
+        try
+        {
+          guestChanged = Integer.parseInt(request.getParameter("guestId"));
+          
+          Guest gMod = conn.getGuest( guestChanged );
+          if ( gMod != null ) 
+          {
+            // update the guest some
+            String saveTheDate = request.getParameter( "stdSent" );
+            String inviteSent = request.getParameter( "inviteSent" );
+            String reply = request.getParameter( "replied" );
+
+            // set save the date
+            if ( saveTheDate == null )
+              gMod.setSaveTheDateSent( false );
+            else if ( saveTheDate.equals( "on" ) )
+              gMod.setSaveTheDateSent( true );
+            else
+              gMod.setSaveTheDateSent( false );
+
+            // set invitation sent
+            if ( inviteSent == null )
+              gMod.setInvitationSent( false );
+            else if ( inviteSent.equals( "on" ) )
+              gMod.setInvitationSent( true );
+            else
+              gMod.setInvitationSent( false );
+
+            // set the reply
+            if ( reply != null )
+            {
+              if ( reply.equals( "" ) )
+              {
+                gMod.setReply( false );
+                gMod.setHasReplied( false );
+              }
+              else 
+              {
+                gMod.setHasReplied( true );
+
+                if ( reply.equals( "yes" ) )
+                  gMod.setReply( true );
+                else
+                  gMod.setReply( false );
+              }
+            }
+
+            conn.changeGuest( gMod );
+          }
+        }
+        catch ( NumberFormatException nfe ) {}
+      }
+    }
+    %>
+    
     <div class="MainSectionBorder">
       <% if ( bolStatus ) { %>
       
@@ -139,7 +201,9 @@
         <div>
           <div class="floatleft">
             <h2>
-              <%= ( ( gv == 0 ) ? "With Pleasure" : "" ) %><%= ( ( gv == 1 ) ? "With Regrets" : "" ) %><%= ( ( gv == 2 ) ? "Not Yet Replied" : "" ) %>
+              <%= ( ( gv == 0 ) ? "With Pleasure" : "" ) %>
+              <%= ( ( gv == 1 ) ? "With Regrets" : "" ) %>
+              <%= ( ( gv == 2 ) ? "Not Yet Replied" : "" ) %>
             </h2>
           </div>
           <div class="floatleft">
@@ -153,110 +217,134 @@
            Host h = conn.getHost( g.getInvitedBy() );
       %>
       
-      <div class="guestname" style="background-color:<%= h.getColor() %>;">
-        <div style="margin: 5px 5px 5px 5px;">
-          <div class="clear">&nbsp;</div>
+      <form name="guest<%= g.getId() %>" action="browse.jsp#guest<%= g.getId() %>" method="get">
+          <a name="guest<%= g.getId() %>"/>
+          <input type="hidden" name="descriptions" value="comprehensive" />
+          <input type="hidden" name="grouping" value="status" />
+          <input type="hidden" name="guestId" value="<%= g.getId() %>" />
           
-          <div class="floatleft" style="width: 25px; text-align: right">
-            <%= (gindex + 1) %>.&nbsp;
-          </div>
-        
-          <div class="floatleft" style="width: 15%;">
-          <% if ( !guestLock ) { %>
-            <a href="edit.jsp?id=<%= g.getId() %>">
-          <% } %>
-
-            <%= g.getFormattedName() %>
-            <% if ( !guestLock ) { %></a>
-          </div>
-          
-          <div class="floatleft smalltext" style="width: 5%">
-            <i><%= ( g.getHasReplied() && g.getReply() ) ? "Attending" : "Invited " %></i>:
-            <%= g.countIndividuals() %>
-          </div>
-
-          <% if ( bolVerbose ) { %>
-
-          <div class="floatleft marginleft smalltext nooverflow" style="width: 20%;">
-            <div>
-              <b>Address</b>
-            </div>
-            <div>
-              <%= g.getAddress1() %>
-              <br/>
-              <% if ( g.getAddress2() != null && !g.getAddress2().equals( "" ) ) {
-              out.write( g.getAddress2() ); %>
-              <br/>
+          <div class="guestname" style="background-color:<%= h.getColor() %>;">
+              <div style="margin: 5px 5px 5px 5px;">
+                  <div class="clear">&nbsp;</div>
+                  
+                  <div class="floatleft" style="width: 25px; text-align: right">
+                      <%= (gindex + 1) %>.&nbsp;
+                  </div>
+                  
+                  <div class="floatleft" style="width: 15%;">
+                      <% if ( !guestLock ) { %>
+                      <a href="edit.jsp?id=<%= g.getId() %>">
+                          <% } %>
+                          
+                          <%= g.getFormattedName() %>
+                      <% if ( !guestLock ) { %></a>
+                  </div>
+                  
+                  <div class="floatleft smalltext" style="width: 5%">
+                      <i><%= ( g.getHasReplied() && g.getReply() ) ? "Attending" : "Invited " %></i>:
+                      <%= g.countIndividuals() %>
+                  </div>
+                  
+                  <% if ( bolVerbose ) { %>
+                  
+                  <div class="floatleft marginleft smalltext nooverflow" style="width: 20%;">
+                      <div>
+                          <b>Address</b>
+                      </div>
+                      <div>
+                          <%= g.getAddress1() %>
+                          <br/>
+                          <% if ( g.getAddress2() != null && !g.getAddress2().equals( "" ) ) {
+                          out.write( g.getAddress2() ); %>
+                          <br/>
+                          <% } %>
+                          <%= g.getCity() %>
+                          <br/>
+                          <%= g.getState() %>, <%= zipFormat.format( g.getZip() ) %>
+                          <% if ( g.getZipFour() != 0 ) { %>
+                          - <%= zip4Format.format( g.getZipFour() ) %>
+                          <% } %>
+                      </div>
+                  </div>
+                  
+                  <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
+                      <div>
+                          <b>Save The Date?</b>
+                      </div>
+                      <div>
+                          <input type="checkbox" name="stdSent" <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
+                      </div>
+                  </div>
+                  
+                  <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%;">
+                      <div>
+                          <b>Invitation?</b>
+                      </div>
+                      <div>
+                          <input type="checkbox" name="inviteSent" <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
+                      </div>
+                  </div>
+                  
+                  <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%;">
+                      <div>
+                          <b>Reply?</b>
+                      </div>
+                      <div>
+                        <%
+                            boolean bolAffirmativeReply = false;
+                            boolean bolNegativeReply = false;
+                            boolean bolNoReply = false;
+                          
+                            bolAffirmativeReply = g.getHasReplied() && g.getReply();
+                            bolNegativeReply = g.getHasReplied() && !g.getReply();
+                            bolNoReply = !g.getHasReplied();
+                        %>
+                          <input type="radio" name="replied" value="yes"
+                            <%= (bolAffirmativeReply) ? "checked=\"checked\"" : "" %> id="gPosReply<%= g.getId() %>" />
+                            <label for="gPosReply<%= g.getId() %>" class="message">Pleasure</label><br/>
+                          <input type="radio" name="replied" value="no"
+                            <%= (bolNegativeReply) ? "checked=\"checked\"" : "" %> id="gNegReply<%= g.getId() %>" />
+                            <label for="gNegReply<%= g.getId() %>" class="error">Regrets</label><br/>
+                          <input type="radio" name="replied" value=""
+                            <%= (bolNoReply) ? "checked=\"checked\"" : "" %> id="gNoReply<%= g.getId() %>" />
+                            <label for="gNoReply<%= g.getId() %>" class="warningFG">Not Yet</label>
+                      </div>
+                  </div>
+                  
+                  <div class="floatleft marginleft smalltext nooverflow" style="width: 20%;">
+                      <div>
+                          <b>Gift Information</b>
+                      </div>
+                      <div>
+                          <% if ( g.getGiftSource() != null && g.getGiftSource().length() > 0 ) { %>
+                          Source: <%= g.getGiftSource() %>
+                          <div class="clear"></div>
+                          <% } if ( g.getGiftItem() != null && g.getGiftItem().length() > 0 ) { %>
+                          Description: <%= g.getGiftItem() %>
+                          <% } %>
+                      </div>
+                  </div>
+                  <% } %>
+                  
+                  <div class="floatright" style="margin: 5px 5px 5px 5px; text-align:center;">
+                      <% if ( bolVerbose ) { %>
+                      <input type="image" src="../images/save.png" value="Save" class="linkbutton" alt="Save" />
+                      <% } %>
+                      <a class="deletelink" href="delete.jsp?id=<%= g.getId() %>">
+                          <img src="../images/delete.png" alt="Delete" class="linkbutton"/>
+                      </a>
+                  </div>
+                  
+                  <div class="clear">&nbsp;</div>
+                  <% } %>
+                  
+              </div>
+              
+              <% if ( guestChanged == g.getId() ) { %>
+                <span class="message">Updated guest.</span>
               <% } %>
-              <%= g.getCity() %>
-              <br/>
-              <%= g.getState() %>, <%= zipFormat.format( g.getZip() ) %>
-              <% if ( g.getZipFour() != 0 ) { %>
-                - <%= zip4Format.format( g.getZipFour() ) %>
-              <% } %>
-            </div>
           </div>
-
-          <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-            <div>
-              <b>Save The Date?</b>
-            </div>
-            <div>
-              <input type="checkbox" disabled <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
-            </div>
-          </div>
-
-          <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%;">
-            <div>
-              <b>Invitation?</b>
-            </div>
-            <div>
-              <input type="checkbox" disabled <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
-            </div>
-          </div>
-
-          <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%;">
-            <div>
-              <b>Reply?</b>
-            </div>
-            <div>
-              <% if ( g.getHasReplied() ) {
-                  if ( g.getReply() ) { %>
-              <span class="message">With Pleasure</span>
-                <% } else { %>
-              <span class="error">With Regrets</span>
-                <% } } else { %>
-              <span class="warningFG">Not Yet</span>
-                <% } %>
-            </div>
-          </div>
-
-          <div class="floatleft marginleft smalltext nooverflow" style="width: 20%;">
-            <div>
-              <b>Gift Information</b>
-            </div>
-            <div>
-              <% if ( g.getGiftSource() != null && g.getGiftSource().length() > 0 ) { %>
-              Source: <%= g.getGiftSource() %>
-              <div class="clear"></div>
-              <% } if ( g.getGiftItem() != null && g.getGiftItem().length() > 0 ) { %>
-              Description: <%= g.getGiftItem() %>
-              <% } %>
-            </div>
-          </div>
-          <% } %>
-
-          <div class="floatright" style="margin: 5px 5px 5px 5px;">
-            <a class="deletelink" href="delete.jsp?id=<%= g.getId() %>">
-              <img src="../images/delete.png" alt="Delete" class="linkbutton"/>
-            </a>
-          </div>
-
-          <div class="clear">&nbsp;</div>
-          <% } %>
-
-        </div>
-      </div>
+      </form>
       
       <% } %>
       
@@ -284,105 +372,132 @@
           for ( int gindex = 0; gindex < guests.size(); gindex++ ) {
             Guest g = (Guest)guests.get( gindex );
         %>
-        <div class="guestname">
-          <div class="clear">&nbsp;</div>
-          
-          <div class="floatleft" style="width: 25px; text-align: right;">
-            <%= (gindex + 1) %>.&nbsp;
-          </div>
-          <div class="floatleft" style="width: 15%">
-          <% if ( !guestLock ) { %>
-            <a href="edit.jsp?id=<%= g.getId() %>">
-          <% } %>
-            <%= g.getFormattedName() %>
-            <% if ( !guestLock ) { %></a>
-          </div>
-
-          <div class="floatleft smalltext" style="width: 5%">
-            <i><%= ( g.getHasReplied() && g.getReply() ) ? "Attending" : "Invited " %></i>:
-            <%= g.countIndividuals() %>
-          </div>
-          
-          <% if ( bolVerbose ) { %>
-          <div class="floatleft marginleft smalltext nooverflow" style="width: 20%">
-            <div>
-              <b>Address</b>
-            </div>
-            <div>
-              <%= g.getAddress1() %>
-              <br/>
-              <% if ( g.getAddress2() != null && !g.getAddress2().equals( "" ) ) {
-              out.write( g.getAddress2() ); %>
-              <br/>
-              <% } %>
-              <%= g.getCity() %>
-              <br/>
-              <%= g.getState() %>, <%= zipFormat.format( g.getZip() ) %>
-              <% if ( g.getZipFour() != 0 ) { %>
-                - <%= zip4Format.format( g.getZipFour() ) %>
-              <% } %>
-            </div>
-          </div>
-
-          <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-            <div>
-              <b>Save The Date?</b>
-            </div>
-            <div>
-              <input type="checkbox" disabled <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
-            </div>
-          </div>
-
-          <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-            <div>
-              <b>Invitation?</b>
-            </div>
-            <div>
-              <input type="checkbox" disabled <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
-            </div>
-          </div>
-
-          <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-            <div>
-              <b>Reply?</b>
-            </div>
-            <div>
-              <% if ( g.getHasReplied() ) {
-                  if ( g.getReply() ) { %>
-              <span class="message">With Pleasure</span>
-                <% } else { %>
-              <span class="error">With Regrets</span>
-                <% } } else { %>
-              <span class="warningFG">Not Yet</span>
+        
+        <form name="guest<%= g.getId() %>" action="browse.jsp#guest<%= g.getId() %>" method="get">
+            <a name="guest<%= g.getId() %>"/>
+            <input type="hidden" name="descriptions" value="comprehensive" />
+            <input type="hidden" name="grouping" value="host" />
+            <input type="hidden" name="guestId" value="<%= g.getId() %>" />     
+            
+            <div class="guestname">
+                <div class="clear">&nbsp;</div>
+                
+                <div class="floatleft" style="width: 25px; text-align: right;">
+                    <%= (gindex + 1) %>.&nbsp;
+                </div>
+                <div class="floatleft" style="width: 15%">
+                    <% if ( !guestLock ) { %>
+                    <a href="edit.jsp?id=<%= g.getId() %>">
+                        <% } %>
+                        <%= g.getFormattedName() %>
+                    <% if ( !guestLock ) { %></a>
+                </div>
+                
+                <div class="floatleft smalltext" style="width: 5%">
+                    <i><%= ( g.getHasReplied() && g.getReply() ) ? "Attending" : "Invited " %></i>:
+                    <%= g.countIndividuals() %>
+                </div>
+                
+                <% if ( bolVerbose ) { %>
+                <div class="floatleft marginleft smalltext nooverflow" style="width: 20%">
+                    <div>
+                        <b>Address</b>
+                    </div>
+                    <div>
+                        <%= g.getAddress1() %>
+                        <br/>
+                        <% if ( g.getAddress2() != null && !g.getAddress2().equals( "" ) ) {
+                        out.write( g.getAddress2() ); %>
+                        <br/>
+                        <% } %>
+                        <%= g.getCity() %>
+                        <br/>
+                        <%= g.getState() %>, <%= zipFormat.format( g.getZip() ) %>
+                        <% if ( g.getZipFour() != 0 ) { %>
+                        - <%= zip4Format.format( g.getZipFour() ) %>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
+                    <div>
+                        <b>Save The Date?</b>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="stdSent" <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
+                    </div>
+                </div>
+                
+                <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
+                    <div>
+                        <b>Invitation?</b>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="inviteSent" <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
+                    </div>
+                </div>
+                
+                <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
+                    <div>
+                        <b>Reply?</b>
+                    </div>
+                    <div>
+                        <%
+                        boolean bolAffirmativeReply = false;
+                        boolean bolNegativeReply = false;
+                        boolean bolNoReply = false;
+                        
+                        bolAffirmativeReply = g.getHasReplied() && g.getReply();
+                        bolNegativeReply = g.getHasReplied() && !g.getReply();
+                        bolNoReply = !g.getHasReplied();
+                        %>
+                        <input type="radio" name="replied" value="yes"
+                               <%= (bolAffirmativeReply) ? "checked=\"checked\"" : "" %> id="gPosReply<%= g.getId() %>" />
+                        <label for="gPosReply<%= g.getId() %>" class="message">Pleasure</label><br/>
+                        <input type="radio" name="replied" value="no"
+                               <%= (bolNegativeReply) ? "checked=\"checked\"" : "" %> id="gNegReply<%= g.getId() %>" />
+                        <label for="gNegReply<%= g.getId() %>" class="error">Regrets</label><br/>
+                        <input type="radio" name="replied" value=""
+                               <%= (bolNoReply) ? "checked=\"checked\"" : "" %> id="gNoReply<%= g.getId() %>" />
+                        <label for="gNoReply<%= g.getId() %>" class="warningFG">Not Yet</label>
+                    </div>
+                </div>
+                
+                <div class="floatleft marginleft smalltext nooverflow" style="width: 20%">
+                    <div>
+                        <b>Gift Information</b>
+                    </div>
+                    <div>
+                        <% if ( g.getGiftSource() != null && g.getGiftSource().length() > 0 ) { %>
+                        Source: <%= g.getGiftSource() %>
+                        <div class="clear"></div>
+                        <% } if ( g.getGiftItem() != null && g.getGiftItem().length() > 0 ) { %>
+                        Description: <%= g.getGiftItem() %>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <% } %>
+                <div class="floatright">
+                    <% if ( bolVerbose ) { %>
+                    <input type="image" src="../images/save.png" value="Save" class="linkbutton" alt="Save" />
+                    <% } %>
+                    <a class="deletelink" href="delete.jsp?id=<%= g.getId() %>">
+                        <img src="../images/delete.png" alt="Delete" class="linkbutton"/>
+                    </a>
+                </div>
                 <% } %>
             </div>
-          </div>
-
-          <div class="floatleft marginleft smalltext nooverflow" style="width: 20%">
-            <div>
-              <b>Gift Information</b>
-            </div>
-            <div>
-              <% if ( g.getGiftSource() != null && g.getGiftSource().length() > 0 ) { %>
-              Source: <%= g.getGiftSource() %>
-              <div class="clear"></div>
-              <% } if ( g.getGiftItem() != null && g.getGiftItem().length() > 0 ) { %>
-              Description: <%= g.getGiftItem() %>
-              <% } %>
-            </div>
-          </div>
-          
-          <% } %>
-          <div class="floatright">
-            <a class="deletelink" href="delete.jsp?id=<%= g.getId() %>">
-              <img src="../images/delete.png" alt="Delete" class="linkbutton"/>
-            </a>
-          </div>
-          <% } %>
-        </div>
+        </form>
         
         <div class="clear">&nbsp;</div>
+        
+        <% if ( guestChanged == g.getId() ) { %>
+        <span class="message">Updated guest.</span>
         <% } %>
+        
+        <% } %>
+        
       </div>
       <% } %>
       
