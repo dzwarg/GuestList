@@ -136,6 +136,7 @@
             // update the guest some
             String saveTheDate = request.getParameter( "stdSent" );
             String inviteSent = request.getParameter( "inviteSent" );
+            String thankYouSent = request.getParameter( "thankYouSent" );
             String reply = request.getParameter( "replied" );
 
             // set save the date
@@ -153,6 +154,13 @@
               gMod.setInvitationSent( true );
             else
               gMod.setInvitationSent( false );
+              
+            if ( thankYouSent == null )
+              gMod.setThankYou( false );
+            else if ( thankYouSent.equals( "on" ) )
+              gMod.setThankYou( true );
+            else
+              gMod.setThankYou( false );
 
             // set the reply
             if ( reply != null )
@@ -267,21 +275,18 @@
                       </div>
                   </div>
                   
-                  <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-                      <div>
+                  <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 15%">
+                      <div style="text-align:left;">
+                          <input type="checkbox" name="stdSent" <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
                           <b>Save The Date?</b>
                       </div>
-                      <div>
-                          <input type="checkbox" name="stdSent" <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
-                      </div>
-                  </div>
-                  
-                  <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%;">
-                      <div>
+                      <div style="text-align:left;">
+                          <input type="checkbox" name="inviteSent" <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
                           <b>Invitation?</b>
                       </div>
-                      <div>
-                          <input type="checkbox" name="inviteSent" <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
+                      <div style="text-align:left;">
+                          <input type="checkbox" name="thankYouSent" <%= ( g.getThankYou() ? "checked" : "" ) %>/>
+                          <b>Thank You Sent?</b>
                       </div>
                   </div>
                   
@@ -419,21 +424,18 @@
                     </div>
                 </div>
                 
-                <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-                    <div>
+                <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 15%">
+                    <div style="text-align:left;">
+                        <input type="checkbox" name="stdSent" <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
                         <b>Save The Date?</b>
                     </div>
-                    <div>
-                        <input type="checkbox" name="stdSent" <%= ( g.getSaveTheDateSent() ? "checked" : "" ) %>/>
-                    </div>
-                </div>
-                
-                <div class="floatleft marginleft centeredIE smalltext nooverflow" style="width: 10%">
-                    <div>
+                    <div style="text-align:left;">
+                        <input type="checkbox" name="inviteSent" <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
                         <b>Invitation?</b>
                     </div>
-                    <div>
-                        <input type="checkbox" name="inviteSent" <%= ( g.getInvitationSent() ? "checked" : "" ) %>/>
+                    <div style="text-align:left;">
+                        <input type="checkbox" name="thankYouSent" <%= ( g.getThankYou() ? "checked" : "" ) %>/>
+                        <b>Thank You Sent?</b>
                     </div>
                 </div>
                 

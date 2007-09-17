@@ -428,7 +428,7 @@
           </div>
           <div class="floatleft halfwidth">
             <% strTmp = theGuest.getGiftItem(); %>
-            &nbsp;<input type="text" name="giftDescription" value="<%= ( (strTmp == null) ? "" : strTmp ) %>"/>
+            &nbsp;<input type="text" name="giftItem" value="<%= ( (strTmp == null) ? "" : strTmp ) %>"/>
           </div>
           <div class="clear"></div>
           <div class="floatleft halfwidth" style="text-align:right;">
