@@ -316,16 +316,16 @@
                       </div>
                   </div>
                   
-                  <div class="floatleft marginleft smalltext nooverflow" style="width: 20%;">
+                  <div class="floatleft marginleft smalltext" style="width: 20%;">
                       <div>
                           <b>Gift Information</b>
                       </div>
                       <div>
                           <% if ( g.getGiftSource() != null && g.getGiftSource().length() > 0 ) { %>
-                          Source: <%= g.getGiftSource() %>
+                          <i>Source</i>: <%= g.getGiftSource() %>
                           <div class="clear"></div>
                           <% } if ( g.getGiftItem() != null && g.getGiftItem().length() > 0 ) { %>
-                          Description: <%= g.getGiftItem() %>
+                          <i>Description</i>: <%= g.getGiftItem() %>
                           <% } %>
                       </div>
                   </div>
@@ -465,16 +465,16 @@
                     </div>
                 </div>
                 
-                <div class="floatleft marginleft smalltext nooverflow" style="width: 20%">
+                <div class="floatleft marginleft smalltext" style="width: 20%">
                     <div>
                         <b>Gift Information</b>
                     </div>
                     <div>
                         <% if ( g.getGiftSource() != null && g.getGiftSource().length() > 0 ) { %>
-                        Source: <%= g.getGiftSource() %>
+                        <i>Source</i>: <%= g.getGiftSource() %>
                         <div class="clear"></div>
                         <% } if ( g.getGiftItem() != null && g.getGiftItem().length() > 0 ) { %>
-                        Description: <%= g.getGiftItem() %>
+                        <i>Description</i>: <%= g.getGiftItem() %>
                         <% } %>
                     </div>
                 </div>
