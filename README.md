@@ -54,4 +54,4 @@ Once these items are in place, you can access the GuestList application.
 
 ## Issues
 
-Feel free to open any issues at (github.com)[https://github.com/dzwarg/GuestList]
+Feel free to open any issues at [github.com](https://github.com/dzwarg/GuestList)
