@@ -1,3 +1,7 @@
+<%--
+    Copyright (c) 2013 David Zwarg <david.zwarg@gmail.com>
+    See LICENSE in the project root for copying permission.
+--%>
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
 

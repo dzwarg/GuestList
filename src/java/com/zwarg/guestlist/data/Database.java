@@ -3,8 +3,8 @@
  *
  * Created on July 24, 2006, 6:58 PM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * Copyright (c) 2013 David Zwarg <david.zwarg@gmail.com>
+ * See LICENSE in the project root for copying permission.
  */
 package com.zwarg.guestlist.data;
 

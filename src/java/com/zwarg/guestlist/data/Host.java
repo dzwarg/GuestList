@@ -2,6 +2,9 @@
  * Host.java
  *
  * Created on July 24, 2006, 6:41 PM
+ *
+ * Copyright (c) 2013 David Zwarg <david.zwarg@gmail.com>
+ * See LICENSE in the project root for copying permission.
  */
 
 package com.zwarg.guestlist.data;
